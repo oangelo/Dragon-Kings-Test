@@ -1,6 +1,9 @@
 #!/usr/bin/python2.7
 from scipy.stats import f 
 import pylab as P
+from math import log
+from sys import argv
+from sys import exit 
 
 def dragon_kings(data_list, n, r):
     data = data_list
@@ -26,21 +29,27 @@ def dragon_kings(data_list, n, r):
 
     return p
 
-file = open("data/great_britain-2008.csv")
-#file = open("data/usa2010.csv")
-lines = file.readlines()
-file.close()
-data = []
-for value in lines:
-    data.append(int(value))
+if __name__ == '__main__':
+    if len(argv) < 4:
+        print "Please enter the following arguments:"
+        print argv[0],"<file name> <number of DK [r]> <number of data [n]>"
+        print """Case the data is a power law, add "pl" to the list of arguments"""
+        exit()
+    r = int(argv[2]) 
+    N = int(argv[3])
 
-r = 1
+    file = open(argv[1])
+    lines = file.readlines()
+    file.close()
+    data = []
+    if "pl" in argv:
+        for value in lines:
+            data.append(log(float(value)))
+    else:
+        for value in lines:
+            data.append(log(float(value)))
 
-serie = [(n, dragon_kings(data, n, r)) for n in range(r + 1, 36)]   
-for i in range(0, len(serie)):
-    print serie[i][0], serie[i][1]
 
-for i in range(10):
-    print "# ", data[i]
-#P.plot([i[0] for i in serie],[i[1] for i in serie], '-o')
-#P.show()
+    serie = [(n, dragon_kings(data, n, r)) for n in range(r + 1, N)]   
+    for i in range(0, len(serie)):
+        print serie[i][0], serie[i][1]
